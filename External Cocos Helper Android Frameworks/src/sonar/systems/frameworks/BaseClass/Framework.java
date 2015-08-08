@@ -1,5 +1,6 @@
 package sonar.systems.frameworks.BaseClass;
 
+import sonar.systems.framework.SonarFrameworkSettings;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -130,6 +131,16 @@ public class Framework
 		
 	}
 	
+	public void PreLoadFullscreenAd()
+	{
+		
+	}
+	
+	public void ShowPreLoadedFullscreenAd()
+	{
+		
+	}
+	
 	public void ShowBannerAd()
 	{
 		
@@ -157,7 +168,17 @@ public class Framework
 	
 	public void ShowVideoAd()
 	{
-		Log.v("CHARTBOOST", "CALLING EMPTY FUNCTION");
+		
+	}
+	
+	public void ShowVideoAd(boolean condition)
+	{
+		
+	}
+	
+	public void PreLoadVideoAd()
+	{
+		
 	}
 	//END REVMOB
 	
@@ -180,4 +201,21 @@ public class Framework
 		
 	}
 	//
+	
+	//GOOGLE ANALYTICS
+	public void SetGAScreenName(String screenName)
+	{
+		
+	}
+	
+	public  void SetGADispatchInterval(int dispatchInterval)
+	{
+		
+	}
+	
+	public  void SendGAEvent(final String category, final String action, final String label, long value)
+	{
+		
+	}
+	//END GOOGLE ANALYTICS
 }

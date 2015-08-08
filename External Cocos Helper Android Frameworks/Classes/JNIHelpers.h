@@ -26,7 +26,10 @@ public:
 	static 			bool	 	jniCommonBoolCall	(const char* methodName, const char* classPath, unsigned int arg0) ;
 
 	static 			void 		jniCommonVoidCall(const char* methodName, const char* classPath, const char* arg0, const char* arg1, const char* arg2, const char* arg3, const char* arg4);
+	static 			void 		jniCommonVoidCall(const char* methodName, const char* classPath, const char* arg0, const char* arg1, const char* arg2, long value);
 	static 			void 		jniCommonVoidCall(const char* methodName, const char* classPath, int position);
+	static 			void 		jniCommonVoidCall(const char* methodName, const char* classPath, bool condition);
+
 };
 
 #endif /* defined(__JniHelpers_H__) */

@@ -22,6 +22,10 @@ public class SonarFrameworkFunctions
 	private static final int REQUEST_LEADERBOARD = 10002;
 	//Google Play Services
 	
+	//Google Analytics
+	private static Framework googleAnalytics = null;
+	//Google Analytics
+	
 	//RevMob
 	private static Framework revmob = null;
 	//RevMob
@@ -42,6 +46,17 @@ public class SonarFrameworkFunctions
 	private static Framework chartboost = null;
 	//Chartboost
 	
+	//MoPub
+	private static Framework mopub = null;
+	//MoPub
+	
+    //Adcolony
+    private static Framework adcolony = null;
+    //Adcolony
+    
+    //Vungle
+    private static Framework vungle = null;
+    //Vungle
 
 	public SonarFrameworkFunctions(Context app) throws ClassNotFoundException
 	{
@@ -80,6 +95,36 @@ public class SonarFrameworkFunctions
 			googlePlayServices = new Framework(); // empty object
 		}
 		//END GOOGLE PLAY SERVICES
+		
+		//GOOGLE ANALYTICS
+		if(SonarFrameworkSettings.USE_GOOGLE_ANALYTICS)
+		{
+
+				try {
+					googleAnalytics = (Framework) Class.forName("sonar.systems.frameworks.GoogleAnalyticsAPI.GoogleAnalyticsAPI").getConstructor().newInstance();
+					googleAnalytics.SetActivity(((SonarFrameworkActivity)app));
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NoSuchMethodException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		else 
+		{
+			googleAnalytics = new Framework(); // empty object
+		}
+		//END GOOGLE ANALYTICS
 		
 		//REVMOB
 		if(SonarFrameworkSettings.USE_REVMOB)
@@ -231,6 +276,96 @@ public class SonarFrameworkFunctions
 		}
 		//END CHARTBOOST
 		
+		//MOPUB
+		if(SonarFrameworkSettings.USE_MOPUB)
+		{
+			
+			try {
+				mopub = (Framework) Class.forName("sonar.systems.frameworks.MoPub.MoPubAds").getConstructor().newInstance();
+				mopub.SetActivity(((SonarFrameworkActivity)app));
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else 
+		{
+			mopub = new Framework(); // empty object
+		}
+		//END MOPUB
+        
+        //ADCOLONY
+        if(SonarFrameworkSettings.USE_ADCOLONY)
+        {
+            
+            try {
+                adcolony = (Framework) Class.forName("sonar.systems.frameworks.AdColony.AdColonyAds").getConstructor().newInstance();
+                adcolony.SetActivity(((SonarFrameworkActivity)app));
+            } catch (InstantiationException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        else 
+        {
+            adcolony = new Framework(); // empty object
+        }
+        //END ADCOLONY
+        
+        //VUNGLE
+        if(SonarFrameworkSettings.USE_VUNGLE)
+        {
+            
+            try {
+                vungle = (Framework) Class.forName("sonar.systems.frameworks.Vungle.VungleAds").getConstructor().newInstance();
+                vungle.SetActivity(((SonarFrameworkActivity)app));
+            } catch (InstantiationException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            vungle = new Framework(); // empty object
+        }
+        //END VUNGLE
+		
 	}
 	
 	public static void displayAlert(final String message) 
@@ -291,6 +426,36 @@ public class SonarFrameworkFunctions
 	}
 
 	public static void submitScore(final String leaderboardID, final long score)
+	{
+		if(SonarFrameworkSettings.USE_GOOGLE_PLAY_GAME_SERVICES)
+		{
+			((SonarFrameworkActivity) app).runOnUiThread(new Runnable() 
+			{
+	
+				@Override
+				public void run() 
+				{
+					if (isSignedIn()) 
+					{
+						Log.d("Google Play Services", "Submit score " + score + " to " + leaderboardID);
+						googlePlayServices.submitScore(leaderboardID,score);
+	
+					} 
+					else 
+					{
+						String message = app.getResources().getString(app.getResources().getIdentifier("fail_submit_score_leaderboard","string",app.getPackageName()));
+						message = message.replace("{score}", score + "");
+						message = message.replace("{leaderboardID}", leaderboardID);
+						displayAlert(message);
+
+					}
+				}
+			});
+		}
+
+	}
+	
+	public static void submitScore(final String leaderboardID, final int score)
 	{
 		if(SonarFrameworkSettings.USE_GOOGLE_PLAY_GAME_SERVICES)
 		{
@@ -536,13 +701,29 @@ public class SonarFrameworkFunctions
 	}
 	
 	public static void ShowFullscreenAdAM()
-	{
-		Log.v("GAZ", "CALLED");	
+	{	
 		if(SonarFrameworkSettings.USE_ADMOB)
 		{
 			admob.ShowFullscreenAd();
 		}
 	}
+	
+	public static void PreLoadFullscreenAdAM()
+	{	
+		if(SonarFrameworkSettings.USE_ADMOB)
+		{
+			admob.PreLoadFullscreenAd();
+		}
+	}
+	
+	public static void ShowPreLoadedFullscreenAdAM()
+	{	
+		if(SonarFrameworkSettings.USE_ADMOB)
+		{
+			admob.ShowPreLoadedFullscreenAd();
+		}
+	}
+	
 	//End AdMob Functions
 	
 	//Chartboost Functions
@@ -554,6 +735,22 @@ public class SonarFrameworkFunctions
 		}
 	}
 	
+	public static void PreLoadFullscreenAdCB()
+	{	
+		if(SonarFrameworkSettings.USE_CHARTBOOST)
+		{
+			chartboost.PreLoadFullscreenAd();
+		}
+	}
+	
+	public static void PreLoadVideoAdCB()
+	{	
+		if(SonarFrameworkSettings.USE_CHARTBOOST)
+		{
+			chartboost.PreLoadVideoAd();
+		}
+	}
+	
 	public static void ShowVideoAdCB()
 	{
 		if(SonarFrameworkSettings.USE_CHARTBOOST)
@@ -562,6 +759,79 @@ public class SonarFrameworkFunctions
 		}
 	}
 	//End Chartboost Functions
+	
+	//Mopub Functions
+	public static void ShowBannerAdMP()
+	{
+		if(SonarFrameworkSettings.USE_MOPUB)
+		{
+			mopub.ShowBannerAd();
+		}
+	}
+	
+	public static void HideBannerAdMP()
+	{
+		if(SonarFrameworkSettings.USE_MOPUB)
+		{
+			mopub.HideBannerAd();
+		}
+	}
+	
+	public static void ShowFullscreenAdMP()
+	{
+		if(SonarFrameworkSettings.USE_MOPUB)
+		{
+			mopub.ShowFullscreenAd();
+		}
+	}
+	//End Mopub Functions
+    
+    //Adcolony Functions
+    public static void ShowRewardedVideoAdAC()
+    {
+        if(SonarFrameworkSettings.USE_ADCOLONY)
+        {
+            adcolony.ShowVideoAd();
+        }
+    }
+    //End Adcolony Functions
+    
+    //Vungle Functions
+    public static void ShowRewardedVideoAdV(boolean isIncentivised)
+    {
+        if(SonarFrameworkSettings.USE_VUNGLE)
+        {
+            vungle.ShowVideoAd(isIncentivised);
+        }
+    }
+    //End Vungle Functions
+	
+	//Google Analytics Functions
+	
+	public static void SetGAScreenName(final String screenName)
+	{
+		if(SonarFrameworkSettings.USE_GOOGLE_ANALYTICS)
+		{
+			googleAnalytics.SetGAScreenName(screenName);
+		}
+	}
+	
+	public static void SetGADispatchInterval(int dispatchInterval)
+	{
+		if(SonarFrameworkSettings.USE_GOOGLE_ANALYTICS)
+		{
+			googleAnalytics.SetGADispatchInterval(dispatchInterval);
+		}
+	}
+	
+	public static void SendGAEvent(final String category, final String action, final String label, long value)
+	{
+		if(SonarFrameworkSettings.USE_GOOGLE_ANALYTICS)
+		{
+			googleAnalytics.SendGAEvent(category,action,label,value);
+		}
+	}
+	//End Google Analytics Functions
 	
 	//Activity Functions OnStart/OnStop/onActivityResult
 	public void onStart() 
@@ -679,6 +949,16 @@ public class SonarFrameworkFunctions
 		 {
 			 chartboost.onCreate(b);
 		 }
+        
+        if(SonarFrameworkSettings.USE_ADCOLONY)
+        {
+            adcolony.onCreate(b);
+        }
+        
+        if(SonarFrameworkSettings.USE_VUNGLE)
+        {
+            vungle.onCreate(b);
+        }
 		
 	}
 	
@@ -704,6 +984,16 @@ public class SonarFrameworkFunctions
 	    {
 	    	 chartboost.onResume();
 	    }
+        
+        if(SonarFrameworkSettings.USE_ADCOLONY)
+        {
+            adcolony.onResume();
+        }
+        
+        if(SonarFrameworkSettings.USE_VUNGLE)
+        {
+            vungle.onResume();
+        }
 
 	}
 	
@@ -731,6 +1021,16 @@ public class SonarFrameworkFunctions
 	    {
 	    	 chartboost.onPause();
 	    }
+        
+        if(SonarFrameworkSettings.USE_ADCOLONY)
+        {
+            adcolony.onPause();
+        }
+        
+        if(SonarFrameworkSettings.USE_VUNGLE)
+        {
+            vungle.onPause();
+        }
 	}
 
 	public void onDestroy() 
@@ -749,6 +1049,11 @@ public class SonarFrameworkFunctions
 	    {
 	    	 chartboost.onDestroy();
 	    }
+		
+		if(SonarFrameworkSettings.USE_MOPUB)
+		{
+			mopub.onDestroy();
+		}
 	}
 	
 	public boolean onBackPressed() 
